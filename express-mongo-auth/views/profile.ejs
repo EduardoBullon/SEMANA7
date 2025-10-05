@@ -1,6 +1,6 @@
 <% 
 const title = 'Mi Perfil - Auth App';
-// user data will be passed from route
+
 %>
 
 <%- include('partials/header', { title, user }) %>
@@ -92,7 +92,7 @@ const title = 'Mi Perfil - Auth App';
     </div>
     
     <div class="col s12 l4">
-        <!-- Account Info Card -->
+        
         <div class="card user-info-card">
             <div class="card-content">
                 <span class="card-title">
@@ -113,8 +113,7 @@ const title = 'Mi Perfil - Auth App';
                 <p><strong>Miembro desde:</strong> <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('es-ES') : 'No disponible' %></p>
             </div>
         </div>
-        
-        <!-- Quick Actions Card -->
+
         <div class="card">
             <div class="card-content">
                 <span class="card-title">
@@ -148,7 +147,6 @@ const title = 'Mi Perfil - Auth App';
     </div>
 </div>
 
-<!-- Change Password Modal -->
 <div id="passwordModal" class="modal">
     <div class="modal-content">
         <h4><i class="material-icons left">lock</i>Cambiar Contraseña</h4>
@@ -194,8 +192,7 @@ async function handleUpdateProfile(event) {
     
     const errorDiv = document.getElementById('errorMessage');
     const successDiv = document.getElementById('successMessage');
-    
-    // Clear previous messages
+
     errorDiv.style.display = 'none';
     successDiv.style.display = 'none';
     
@@ -211,8 +208,7 @@ async function handleUpdateProfile(event) {
             const result = await response.json();
             successDiv.textContent = 'Perfil actualizado exitosamente';
             successDiv.style.display = 'block';
-            
-            // Update UI with new data if needed
+
             AuthApp.showToast('Perfil actualizado exitosamente', 'green');
         } else {
             const result = await response.json();
@@ -241,15 +237,13 @@ async function handleChangePassword(event) {
     
     const errorDiv = document.getElementById('passwordError');
     errorDiv.style.display = 'none';
-    
-    // Validate passwords match
+
     if (data.newPassword !== data.confirmPassword) {
         errorDiv.textContent = 'Las contraseñas no coinciden';
         errorDiv.style.display = 'block';
         return;
     }
-    
-    // Validate password strength
+
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%\^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
     if (!passwordRegex.test(data.newPassword)) {
         errorDiv.textContent = 'La nueva contraseña debe tener al menos 8 caracteres, una mayúscula, un dígito y un carácter especial';
@@ -270,8 +264,7 @@ async function handleChangePassword(event) {
         
         if (response && response.ok) {
             AuthApp.showToast('Contraseña cambiada exitosamente', 'green');
-            
-            // Close modal and reset form
+
             const modal = M.Modal.getInstance(document.getElementById('passwordModal'));
             modal.close();
             form.reset();
@@ -288,7 +281,6 @@ async function handleChangePassword(event) {
     }
 }
 
-// Initialize datepicker with current date
 document.addEventListener('DOMContentLoaded', function() {
     const birthdateInput = document.getElementById('birthdate');
     if (birthdateInput.value) {

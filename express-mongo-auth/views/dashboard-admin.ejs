@@ -1,6 +1,6 @@
 <% 
 const title = 'Dashboard Admin - Auth App';
-// user data will be passed from route
+
 %>
 
 <%- include('partials/header', { title, user }) %>
@@ -16,7 +16,7 @@ const title = 'Dashboard Admin - Auth App';
 </div>
 
 <div class="row">
-    <!-- Users Count Card -->
+    
     <div class="col s12 m6 l3">
         <div class="card dashboard-card blue lighten-5">
             <div class="card-content center-align">
@@ -27,7 +27,6 @@ const title = 'Dashboard Admin - Auth App';
         </div>
     </div>
 
-    <!-- Admin Count Card -->
     <div class="col s12 m6 l3">
         <div class="card dashboard-card red lighten-5">
             <div class="card-content center-align">
@@ -38,7 +37,6 @@ const title = 'Dashboard Admin - Auth App';
         </div>
     </div>
 
-    <!-- Recent Activity Card -->
     <div class="col s12 m6 l3">
         <div class="card dashboard-card green lighten-5">
             <div class="card-content center-align">
@@ -49,7 +47,6 @@ const title = 'Dashboard Admin - Auth App';
         </div>
     </div>
 
-    <!-- Settings Card -->
     <div class="col s12 m6 l3">
         <div class="card dashboard-card orange lighten-5">
             <div class="card-content center-align">
@@ -101,7 +98,7 @@ const title = 'Dashboard Admin - Auth App';
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
-                            <!-- Users will be loaded dynamically -->
+                            
                         </tbody>
                     </table>
                 </div>
@@ -114,12 +111,11 @@ const title = 'Dashboard Admin - Auth App';
     </div>
 </div>
 
-<!-- User Detail Modal -->
 <div id="userModal" class="modal">
     <div class="modal-content">
         <h4><i class="material-icons left">person</i>Detalles del Usuario</h4>
         <div id="userDetails">
-            <!-- User details will be loaded here -->
+            
         </div>
     </div>
     <div class="modal-footer">
@@ -220,13 +216,11 @@ function showUserDetails(userId) {
             </div>
         </div>
     `;
-    
-    // Open modal
+
     const modal = M.Modal.getInstance(document.getElementById('userModal'));
     modal.open();
 }
 
-// Load users when page loads
 document.addEventListener('DOMContentLoaded', function() {
     loadUsers();
 });

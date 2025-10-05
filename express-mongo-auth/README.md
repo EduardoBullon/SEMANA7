@@ -136,7 +136,6 @@ POST /api/auth/signIn
   "password": "Admin@123"
 }
 
-// Respuesta
 {
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
