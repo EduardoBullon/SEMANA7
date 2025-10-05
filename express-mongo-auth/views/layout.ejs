@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title || 'Express Mongo Auth' %></title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+    <link href="/css/app.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="blue darken-2">
+        <div class="nav-wrapper container">
+            <a href="/" class="brand-logo">
+                <i class="material-icons left">account_circle</i>Auth App
+            </a>
+            <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <li><a href="/profile"><i class="material-icons left">person</i>Perfil</a></li>
+                    <% if (user.roles && user.roles.includes('admin')) { %>
+                        <li><a href="/dashboard/admin"><i class="material-icons left">admin_panel_settings</i>Admin</a></li>
+                    <% } else { %>
+                        <li><a href="/dashboard/user"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+                    <% } %>
+                    <li><a href="#" onclick="logout()"><i class="material-icons left">exit_to_app</i>Cerrar Sesión</a></li>
+                <% } else { %>
+                    <li><a href="/signin"><i class="material-icons left">login</i>Iniciar Sesión</a></li>
+                    <li><a href="/signup"><i class="material-icons left">person_add</i>Registrarse</a></li>
+                <% } %>
+            </ul>
+        </div>
+    </nav>
+
+    <main class="container" style="margin-top: 30px;">
+        <%- body %>
+    </main>
+
+    <footer class="page-footer blue darken-2" style="margin-top: 50px;">
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="white-text">Express Mongo Auth</h5>
+                    <p class="grey-text text-lighten-4">Sistema de autenticación con roles.</p>
+                </div>
+            </div>
+        </div>
+        <div class="footer-copyright">
+            <div class="container">
+                © 2025 Laboratorio SEMANA7
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    
+    <script src="/js/app.js"></script>
+    
+    <%- typeof scripts !== 'undefined' ? scripts : '' %>
+</body>
+</html>

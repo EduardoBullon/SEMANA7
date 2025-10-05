@@ -1,0 +1,55 @@
+<% 
+const title = '403 - Acceso Denegado';
+const user = null; // May or may not have user context
+%>
+
+<%- include('partials/header', { title, user }) %>
+
+<div class="row">
+    <div class="col s12">
+        <div class="error-page">
+            <div class="error-code">403</div>
+            <h3>
+                <i class="material-icons large red-text">block</i>
+                Acceso Denegado
+            </h3>
+            <p class="grey-text">
+                No tienes permisos suficientes para acceder a esta página.
+            </p>
+            
+            <div style="margin-top: 40px;">
+                <% if (typeof user !== 'undefined' && user) { %>
+                    <% if (user.roles && user.roles.includes('admin')) { %>
+                        <a href="/dashboard/admin" class="btn green waves-effect waves-light">
+                            <i class="material-icons left">admin_panel_settings</i>
+                            Ir al Dashboard Admin
+                        </a>
+                    <% } else { %>
+                        <a href="/dashboard/user" class="btn green waves-effect waves-light">
+                            <i class="material-icons left">dashboard</i>
+                            Ir a Mi Dashboard
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <a href="/signin" class="btn green waves-effect waves-light">
+                        <i class="material-icons left">login</i>
+                        Iniciar Sesión
+                    </a>
+                <% } %>
+                
+                <a href="/" class="btn-flat waves-effect waves-light">
+                    <i class="material-icons left">home</i>
+                    Ir al Inicio
+                </a>
+            </div>
+            
+            <div class="card-panel orange lighten-4 orange-text text-darken-2" style="margin-top: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                <i class="material-icons left">info</i>
+                <strong>¿Necesitas acceso?</strong>
+                <p>Si crees que deberías tener acceso a esta página, contacta al administrador del sistema.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('partials/footer') %>

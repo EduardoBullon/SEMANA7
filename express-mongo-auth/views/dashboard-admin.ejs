@@ -1,0 +1,235 @@
+<% 
+const title = 'Dashboard Admin - Auth App';
+// user data will be passed from route
+%>
+
+<%- include('partials/header', { title, user }) %>
+
+<div class="row">
+    <div class="col s12">
+        <h3>
+            <i class="material-icons left large">admin_panel_settings</i>
+            Dashboard de Administrador
+        </h3>
+        <p class="grey-text">Panel de control administrativo</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Users Count Card -->
+    <div class="col s12 m6 l3">
+        <div class="card dashboard-card blue lighten-5">
+            <div class="card-content center-align">
+                <i class="material-icons large blue-text">people</i>
+                <h5 id="usersCount">-</h5>
+                <p>Total Usuarios</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Count Card -->
+    <div class="col s12 m6 l3">
+        <div class="card dashboard-card red lighten-5">
+            <div class="card-content center-align">
+                <i class="material-icons large red-text">admin_panel_settings</i>
+                <h5 id="adminsCount">-</h5>
+                <p>Administradores</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Activity Card -->
+    <div class="col s12 m6 l3">
+        <div class="card dashboard-card green lighten-5">
+            <div class="card-content center-align">
+                <i class="material-icons large green-text">trending_up</i>
+                <h5>Activo</h5>
+                <p>Sistema en línea</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Card -->
+    <div class="col s12 m6 l3">
+        <div class="card dashboard-card orange lighten-5">
+            <div class="card-content center-align">
+                <i class="material-icons large orange-text">settings</i>
+                <h5>Config</h5>
+                <p>Sistema</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col s12">
+        <div class="card">
+            <div class="card-content">
+                <span class="card-title">
+                    <i class="material-icons left">people</i>
+                    Gestión de Usuarios
+                    <a class="btn-floating btn-small waves-effect waves-light green right" onclick="loadUsers()">
+                        <i class="material-icons">refresh</i>
+                    </a>
+                </span>
+                
+                <div id="loadingUsers" class="center-align" style="padding: 20px;">
+                    <div class="preloader-wrapper small active">
+                        <div class="spinner-layer spinner-blue">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div><div class="gap-patch">
+                                <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <p>Cargando usuarios...</p>
+                </div>
+                
+                <div id="usersTable" style="display: none;">
+                    <table class="striped responsive-table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Roles</th>
+                                <th>Fecha Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Users will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div id="noUsers" style="display: none;" class="center-align">
+                    <p class="grey-text">No se encontraron usuarios.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- User Detail Modal -->
+<div id="userModal" class="modal">
+    <div class="modal-content">
+        <h4><i class="material-icons left">person</i>Detalles del Usuario</h4>
+        <div id="userDetails">
+            <!-- User details will be loaded here -->
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Cerrar</a>
+    </div>
+</div>
+
+<script>
+let users = [];
+
+async function loadUsers() {
+    const loadingDiv = document.getElementById('loadingUsers');
+    const tableDiv = document.getElementById('usersTable');
+    const noUsersDiv = document.getElementById('noUsers');
+    
+    loadingDiv.style.display = 'block';
+    tableDiv.style.display = 'none';
+    noUsersDiv.style.display = 'none';
+    
+    try {
+        const response = await AuthApp.apiRequest('/api/users');
+        
+        if (response && response.ok) {
+            users = await response.json();
+            displayUsers(users);
+            updateUserCounts(users);
+        } else {
+            throw new Error('Error al cargar usuarios');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        AuthApp.showToast('Error al cargar usuarios', 'red');
+        noUsersDiv.style.display = 'block';
+    } finally {
+        loadingDiv.style.display = 'none';
+    }
+}
+
+function displayUsers(users) {
+    const tbody = document.getElementById('usersTableBody');
+    const tableDiv = document.getElementById('usersTable');
+    const noUsersDiv = document.getElementById('noUsers');
+    
+    if (!users || users.length === 0) {
+        noUsersDiv.style.display = 'block';
+        return;
+    }
+    
+    tbody.innerHTML = users.map(user => `
+        <tr>
+            <td>${user.name || ''} ${user.lastName || ''}</td>
+            <td>${user.email}</td>
+            <td>${user.phoneNumber || 'N/A'}</td>
+            <td>
+                ${user.roles.map(role => 
+                    `<span class="chip ${role === 'admin' ? 'red' : 'green'} white-text">${role}</span>`
+                ).join(' ')}
+            </td>
+            <td>${user.createdAt ? new Date(user.createdAt).toLocaleDateString('es-ES') : 'N/A'}</td>
+            <td>
+                <a class="btn-small green waves-effect waves-light" onclick="showUserDetails('${user.id}')">
+                    <i class="material-icons">visibility</i>
+                </a>
+            </td>
+        </tr>
+    `).join('');
+    
+    tableDiv.style.display = 'block';
+}
+
+function updateUserCounts(users) {
+    const totalUsers = users.length;
+    const adminUsers = users.filter(user => user.roles.includes('admin')).length;
+    
+    document.getElementById('usersCount').textContent = totalUsers;
+    document.getElementById('adminsCount').textContent = adminUsers;
+}
+
+function showUserDetails(userId) {
+    const user = users.find(u => u.id === userId);
+    if (!user) return;
+    
+    const detailsDiv = document.getElementById('userDetails');
+    detailsDiv.innerHTML = `
+        <div class="row">
+            <div class="col s12 m6">
+                <p><strong>ID:</strong> ${user.id}</p>
+                <p><strong>Nombre:</strong> ${user.name || 'N/A'} ${user.lastName || ''}</p>
+                <p><strong>Email:</strong> ${user.email}</p>
+                <p><strong>Teléfono:</strong> ${user.phoneNumber || 'N/A'}</p>
+            </div>
+            <div class="col s12 m6">
+                <p><strong>Fecha de Nacimiento:</strong> ${user.birthdate ? new Date(user.birthdate).toLocaleDateString('es-ES') : 'N/A'}</p>
+                <p><strong>Dirección:</strong> ${user.address || 'N/A'}</p>
+                <p><strong>URL Perfil:</strong> ${user.url_profile ? `<a href="${user.url_profile}" target="_blank">${user.url_profile}</a>` : 'N/A'}</p>
+                <p><strong>Roles:</strong> ${user.roles.join(', ')}</p>
+                <p><strong>Registrado:</strong> ${user.createdAt ? new Date(user.createdAt).toLocaleDateString('es-ES') : 'N/A'}</p>
+            </div>
+        </div>
+    `;
+    
+    // Open modal
+    const modal = M.Modal.getInstance(document.getElementById('userModal'));
+    modal.open();
+}
+
+// Load users when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadUsers();
+});
+</script>
+
+<%- include('partials/footer') %>
