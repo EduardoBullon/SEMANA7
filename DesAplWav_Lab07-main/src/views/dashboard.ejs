@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+
+  <!-- Importar Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <!-- Iconos de Google -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+  <style>
+    body {
+      background-color: #fafafa;
+    }
+    .navbar {
+      background-color: #c62828;
+    }
+    .card {
+      margin-top: 40px;
+    }
+    .logout-btn {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Barra de navegación -->
+  <nav class="navbar">
+    <div class="nav-wrapper container">
+      <a href="#" class="brand-logo">Dashboard</a>
+      <ul id="nav-mobile" class="right hide-on-med-and-down">
+        <li><a id="logout" class="waves-effect waves-light btn-small red darken-3">
+          <i class="material-icons left">exit_to_app</i>Cerrar sesión
+        </a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container">
+    <div class="card z-depth-3">
+      <div class="card-content center-align">
+        <h5 class="red-text text-darken-2">Bienvenido al Dashboard</h5>
+        <div id="userData" class="section">
+          <div class="progress red lighten-4">
+            <div class="indeterminate red darken-2"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Importar Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script>
+    async function loadProfile() {
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        M.toast({ html: 'Debes iniciar sesión', classes: 'red' });
+        return window.location.href = '/signin';
+      }
+
+      const res = await fetch('/api/users/me', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+
+      const data = await res.json();
+
+      const userDiv = document.getElementById('userData');
+
+      if (res.ok) {
+        userDiv.innerHTML = `
+          <div class="row">
+            <div class="col s12 m8 offset-m2">
+              <div class="card-panel grey lighten-4">
+                <h6><strong>Nombre:</strong> ${data.name} ${data.lastName || ''}</h6>
+                <p><strong>Email:</strong> ${data.email}</p>
+                <p><strong>Roles:</strong> ${data.roles.join(', ')}</p>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        userDiv.innerHTML = '<p class="red-text">Error al obtener los datos del usuario</p>';
+      }
+    }
+
+    document.getElementById('logout').addEventListener('click', () => {
+      sessionStorage.removeItem('token');
+      M.toast({ html: 'Sesión cerrada', classes: 'blue' });
+      setTimeout(() => window.location.href = '/signin', 1000);
+    });
+
+    loadProfile();
+  </script>
+</body>
+</html>

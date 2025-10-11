@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Usuario</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Materialize -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="grey lighten-4">
+
+  <!-- Navbar homogéneo -->
+  <nav class="red darken-2">
+    <div class="nav-wrapper container">
+      <a href="#!" class="brand-logo">
+        <i class="material-icons left">person</i>Usuario
+      </a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="#" id="goDashboard"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+        <li><a href="/profile"><i class="material-icons left">account_circle</i>Mi Perfil</a></li>
+        <li><a href="#" id="logout"><i class="material-icons left">exit_to_app</i>Cerrar sesión</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Contenido -->
+  <div class="container section">
+    <h4 class="red-text text-darken-2 center-align">Panel de Usuario</h4>
+
+    <div id="userData" class="card-panel white z-depth-2 center-align">
+      <p class="grey-text">Cargando perfil...</p>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = sessionStorage.getItem('token');
+      if (!token) return location.href = '/signin';
+
+      try {
+        const res = await fetch('/api/users/me', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        const data = await res.json();
+        const container = document.getElementById('userData');
+
+        if (res.ok) {
+          container.innerHTML = `
+            <p><strong>Nombre:</strong> ${data.name} ${data.lastName || ''}</p>
+            <p><strong>Email:</strong> ${data.email}</p>
+            <p><strong>Teléfono:</strong> ${data.phoneNumber || '-'}</p>
+          `;
+        } else {
+          location.href = '/403';
+        }
+
+        // Navegación según rol (idéntica al admin)
+        document.getElementById('goDashboard').addEventListener('click', () => {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const roles = payload.roles || [];
+          if (roles.includes('admin')) location.href = '/dashboard/admin';
+          else location.href = '/dashboard/user';
+        });
+
+        // Logout
+        document.getElementById('logout').addEventListener('click', () => {
+          sessionStorage.removeItem('token');
+          location.href = '/signin';
+        });
+
+      } catch (error) {
+        console.error(error);
+        location.href = '/signin';
+      }
+    });
+  </script>
+</body>
+</html>

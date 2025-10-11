@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Admin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="grey lighten-4">
+
+  <!-- Navbar -->
+  <nav class="red darken-2">
+    <div class="nav-wrapper container">
+      <a href="#!" class="brand-logo">
+        <i class="material-icons left">admin_panel_settings</i>Administrador
+      </a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="#" id="goDashboard"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+        <li><a href="/profile"><i class="material-icons left">account_circle</i>Mi Perfil</a></li>
+        <li><a href="#" id="logout"><i class="material-icons left">exit_to_app</i>Cerrar sesión</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container section">
+    <h4 class="red-text text-darken-2 center-align">Panel de Administración</h4>
+
+    <div class="card-panel white z-depth-2">
+      <h5 class="red-text text-darken-2">
+        <i class="material-icons left">group</i>Usuarios Registrados
+      </h5>
+
+      <table class="highlight responsive-table">
+        <thead class="grey lighten-3">
+          <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Roles</th>
+            <th>Registro</th>
+          </tr>
+        </thead>
+        <tbody id="usersTable">
+          <tr><td colspan="5" class="center-align">Cargando usuarios...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = sessionStorage.getItem('token');
+      if (!token) return location.href = '/signin';
+
+      const tbody = document.getElementById('usersTable');
+
+      try {
+        const res = await fetch('/api/users', {
+          headers: { 'Authorization': 'Bearer ' + token }
+        });
+
+        if (!res.ok) return location.href = '/403';
+
+        const users = await res.json();
+
+        tbody.innerHTML = users.length
+          ? users.map(u => {
+              // Extrae nombres de roles correctamente
+              const roleNames = (u.roles || []).map(r => r.name).join(', ') || '-';
+
+              return `
+                <tr>
+                  <td>${u.name} ${u.lastName || ''}</td>
+                  <td>${u.email}</td>
+                  <td>${u.phoneNumber || '-'}</td>
+                  <td>${roleNames}</td>
+                  <td>${new Date(u.createdAt).toLocaleDateString()}</td>
+                </tr>
+              `;
+            }).join('')
+          : `<tr><td colspan="5" class="center-align grey-text">No hay usuarios registrados.</td></tr>`;
+
+        // Redirección según rol
+        document.getElementById('goDashboard').addEventListener('click', () => {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          const roles = payload.roles || [];
+          if (roles.includes('admin')) location.href = '/dashboard/admin';
+          else location.href = '/dashboard/user';
+        });
+
+        // Logout
+        document.getElementById('logout').addEventListener('click', () => {
+          sessionStorage.removeItem('token');
+          location.href = '/signin';
+        });
+
+      } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+        tbody.innerHTML = `<tr><td colspan="5" class="center-align red-text">Error al cargar usuarios.</td></tr>`;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mi Perfil</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Materialize CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body class="grey lighten-4">
+
+  <!-- Navbar (homogénea con Admin Dashboard) -->
+  <nav class="red darken-2">
+    <div class="nav-wrapper container">
+      <a href="#!" class="brand-logo">
+        <i class="material-icons left">account_circle</i>Mi Perfil
+      </a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="#" id="goDashboard"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+        <li><a href="/profile"><i class="material-icons left">account_circle</i>Mi Perfil</a></li>
+        <li><a href="#" id="logout"><i class="material-icons left">exit_to_app</i>Cerrar sesión</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container section">
+    <h4 class="red-text text-darken-2 center-align">Perfil del Usuario</h4>
+
+    <!-- Datos personales -->
+    <div class="card-panel white z-depth-2">
+      <h5 class="red-text text-darken-2">
+        <i class="material-icons left">person</i>Datos personales
+      </h5>
+      <form id="profileForm">
+        <div class="row">
+          <div class="input-field col s12 m6">
+            <input type="text" id="name" name="name" required>
+            <label for="name">Nombre</label>
+          </div>
+
+          <div class="input-field col s12 m6">
+            <input type="text" id="lastName" name="lastName" required>
+            <label for="lastName">Apellido</label>
+          </div>
+
+          <div class="input-field col s12 m6">
+            <input type="email" id="email" name="email" disabled>
+            <label for="email" class="active">Correo electrónico</label>
+          </div>
+
+          <div class="input-field col s12 m6">
+            <input type="text" id="phoneNumber" name="phoneNumber">
+            <label for="phoneNumber">Teléfono</label>
+          </div>
+
+          <div class="input-field col s12 m6">
+            <input type="date" id="birthdate" name="birthdate">
+            <label for="birthdate" class="active">Fecha de nacimiento</label>
+          </div>
+
+          <div class="input-field col s12 m6">
+            <input type="text" id="address" name="address">
+            <label for="address">Dirección</label>
+          </div>
+
+          <div class="input-field col s12">
+            <input type="text" id="url_profile" name="url_profile">
+            <label for="url_profile">URL de perfil</label>
+          </div>
+        </div>
+
+        <div class="center-align">
+          <button type="submit" class="btn red darken-2 waves-effect waves-light">
+            <i class="material-icons left">save</i>Guardar cambios
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Cambiar contraseña -->
+    <div class="card-panel white z-depth-2">
+      <h5 class="red-text text-darken-2">
+        <i class="material-icons left">lock</i>Cambiar contraseña
+      </h5>
+      <form id="passwordForm">
+        <div class="row">
+          <div class="input-field col s12 m6">
+            <input type="password" id="oldPassword" name="oldPassword" required>
+            <label for="oldPassword">Contraseña actual</label>
+          </div>
+
+          <div class="input-field col s12 m6">
+            <input type="password" id="newPassword" name="newPassword" required>
+            <label for="newPassword">Nueva contraseña</label>
+          </div>
+        </div>
+
+        <div class="center-align">
+          <button type="submit" class="btn red darken-2 waves-effect waves-light">
+            <i class="material-icons left">check_circle</i>Actualizar contraseña
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Materialize JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      const token = sessionStorage.getItem('token');
+      if (!token) return location.href = '/signin';
+
+      // Obtener datos del usuario
+      const res = await fetch('/api/users/me', {
+        headers: { 'Authorization': 'Bearer ' + token }
+      });
+      const data = await res.json();
+      if (!res.ok) return location.href = '/403';
+
+      // Rellenar campos
+      const fields = ['name', 'lastName', 'email', 'phoneNumber', 'birthdate', 'address', 'url_profile'];
+      fields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          if (id === 'birthdate' && data.birthdate)
+            el.value = data.birthdate.split('T')[0];
+          else
+            el.value = data[id] || '';
+        }
+      });
+      M.updateTextFields();
+
+      // Redirigir según rol
+      document.getElementById('goDashboard').addEventListener('click', () => {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const roles = payload.roles || [];
+        if (roles.includes('admin')) location.href = '/dashboard/admin';
+        else location.href = '/dashboard/user';
+      });
+
+      // Logout
+      document.getElementById('logout').addEventListener('click', () => {
+        sessionStorage.removeItem('token');
+        location.href = '/signin';
+      });
+
+      // Actualizar perfil
+      document.getElementById('profileForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(e.target));
+        const res = await fetch('/api/users/me', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        if (res.ok) M.toast({ html: 'Perfil actualizado con éxito', classes: 'green' });
+        else M.toast({ html: 'Error al actualizar el perfil', classes: 'red' });
+      });
+
+      // Actualizar contraseña
+      document.getElementById('passwordForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        const formData = Object.fromEntries(new FormData(e.target));
+        const res = await fetch('/api/users/me/password', {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        });
+        const message = res.ok
+          ? 'Contraseña actualizada con éxito'
+          : (await res.json()).message || 'Error al actualizar la contraseña';
+        M.toast({ html: message, classes: res.ok ? 'green' : 'red' });
+        if (res.ok) e.target.reset();
+      });
+    });
+  </script>
+</body>
+</html>
