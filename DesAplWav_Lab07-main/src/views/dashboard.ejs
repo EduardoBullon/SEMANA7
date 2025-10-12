@@ -12,16 +12,71 @@
 
   <style>
     body {
-      background-color: #fafafa;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
     .navbar {
-      background-color: #c62828;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+      box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .navbar .brand-logo {
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     .card {
       margin-top: 40px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .card-content {
+      padding: 40px;
+    }
+    .card-title {
+      color: #2563eb;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+      margin-bottom: 30px;
     }
     .logout-btn {
       margin-top: 20px;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      border-radius: 10px;
+      box-shadow: 0 6px 15px rgba(239, 68, 68, 0.3);
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+    }
+    .logout-btn:hover {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+    .logout-btn i {
+      font-size: 16px;
+      margin: 0;
+    }
+    .progress {
+      background: rgba(37, 99, 235, 0.1);
+      border-radius: 10px;
+    }
+    .progress .indeterminate {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    }
+    .user-info-card {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+      border-radius: 15px;
+      padding: 20px;
+      margin-top: 20px;
+      border-left: 4px solid #3b82f6;
     }
   </style>
 </head>
@@ -30,10 +85,11 @@
   <!-- Barra de navegación -->
   <nav class="navbar">
     <div class="nav-wrapper container">
-      <a href="#" class="brand-logo">Dashboard</a>
+      <a href="#" class="brand-logo">Analytics Hub</a>
       <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li><a id="logout" class="waves-effect waves-light btn-small red darken-3">
-          <i class="material-icons left">exit_to_app</i>Cerrar sesión
+        <li><a id="logout" class="waves-effect waves-light btn-small logout-btn">
+          <i class="material-icons">power_settings_new</i>
+          <span>Cerrar sesión</span>
         </a></li>
       </ul>
     </div>
@@ -43,10 +99,10 @@
   <div class="container">
     <div class="card z-depth-3">
       <div class="card-content center-align">
-        <h5 class="red-text text-darken-2">Bienvenido al Dashboard</h5>
+        <h5 class="card-title">Bienvenido al Dashboard</h5>
         <div id="userData" class="section">
-          <div class="progress red lighten-4">
-            <div class="indeterminate red darken-2"></div>
+          <div class="progress">
+            <div class="indeterminate"></div>
           </div>
         </div>
       </div>

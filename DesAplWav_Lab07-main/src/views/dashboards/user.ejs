@@ -7,28 +7,90 @@
   <!-- Materialize -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar-user {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+      box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .navbar-user .brand-logo {
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .page-title {
+      color: #2563eb;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+      margin-bottom: 30px;
+    }
+    .card-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 40px;
+    }
+    .user-info {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+      border-radius: 15px;
+      padding: 20px;
+      margin: 10px 0;
+      border-left: 4px solid #3b82f6;
+    }
+    .user-info p {
+      margin: 15px 0;
+      font-size: 16px;
+      color: #374151;
+      text-align: left;
+    }
+    .user-info strong {
+      color: #2563eb;
+      font-weight: 600;
+    }
+    .user-welcome {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .user-welcome h5 {
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .user-welcome p {
+      color: #6b7280;
+      font-size: 16px;
+    }
+  </style>
 </head>
-<body class="grey lighten-4">
+<body>
 
   <!-- Navbar homogéneo -->
-  <nav class="red darken-2">
+  <nav class="navbar-user">
     <div class="nav-wrapper container">
       <a href="#!" class="brand-logo">
-        <i class="material-icons left">person</i>Usuario
+        <i class="material-icons left">account_box</i>Usuario
       </a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="#" id="goDashboard"><i class="material-icons left">dashboard</i>Dashboard</a></li>
-        <li><a href="/profile"><i class="material-icons left">account_circle</i>Mi Perfil</a></li>
-        <li><a href="#" id="logout"><i class="material-icons left">exit_to_app</i>Cerrar sesión</a></li>
+        <li><a href="#" id="goDashboard"><i class="material-icons left">analytics</i>Dashboard</a></li>
+        <li><a href="/profile"><i class="material-icons left">manage_accounts</i>Mi Perfil</a></li>
+        <li><a href="#" id="logout"><i class="material-icons left">power_settings_new</i>Cerrar sesión</a></li>
       </ul>
     </div>
   </nav>
 
   <!-- Contenido -->
   <div class="container section">
-    <h4 class="red-text text-darken-2 center-align">Panel de Usuario</h4>
+    <h4 class="page-title center-align">Panel de Usuario</h4>
 
-    <div id="userData" class="card-panel white z-depth-2 center-align">
+    <div id="userData" class="card-panel z-depth-2 center-align">
       <p class="grey-text">Cargando perfil...</p>
     </div>
   </div>
@@ -50,9 +112,16 @@
 
         if (res.ok) {
           container.innerHTML = `
-            <p><strong>Nombre:</strong> ${data.name} ${data.lastName || ''}</p>
-            <p><strong>Email:</strong> ${data.email}</p>
-            <p><strong>Teléfono:</strong> ${data.phoneNumber || '-'}</p>
+            <div class="user-welcome">
+              <h5><i class="material-icons" style="vertical-align: middle; margin-right: 8px;">waving_hand</i>Bienvenido, ${data.name}!</h5>
+              <p>Aquí puedes ver tu información personal</p>
+            </div>
+            <div class="user-info">
+              <p><strong>Nombre:</strong> ${data.name} ${data.lastName || ''}</p>
+              <p><strong>Email:</strong> ${data.email}</p>
+              <p><strong>Teléfono:</strong> ${data.phoneNumber || 'No especificado'}</p>
+              <p><strong>Fecha de nacimiento:</strong> ${data.birthdate ? new Date(data.birthdate).toLocaleDateString('es-ES') : 'No especificada'}</p>
+            </div>
           `;
         } else {
           location.href = '/403';

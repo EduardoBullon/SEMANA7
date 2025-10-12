@@ -7,34 +7,78 @@
   <!-- Materialize CSS -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar-admin {
+      background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+      box-shadow: 0 4px 20px rgba(30, 58, 138, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .navbar-admin .brand-logo {
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+    .page-title {
+      color: #2563eb;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+      margin-bottom: 30px;
+    }
+    .card-panel {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 30px;
+    }
+    .section-title {
+      color: #2563eb;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .highlight tbody tr:hover {
+      background: rgba(59, 130, 246, 0.1);
+    }
+    .table-header {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+      border-radius: 10px 10px 0 0;
+    }
+  </style>
 </head>
-<body class="grey lighten-4">
+<body>
 
   <!-- Navbar -->
-  <nav class="red darken-2">
+  <nav class="navbar-admin">
     <div class="nav-wrapper container">
       <a href="#!" class="brand-logo">
-        <i class="material-icons left">admin_panel_settings</i>Administrador
+        <i class="material-icons left">admin_panel_settings</i>Panel Administrativo
       </a>
       <ul class="right hide-on-med-and-down">
-        <li><a href="#" id="goDashboard"><i class="material-icons left">dashboard</i>Dashboard</a></li>
-        <li><a href="/profile"><i class="material-icons left">account_circle</i>Mi Perfil</a></li>
-        <li><a href="#" id="logout"><i class="material-icons left">exit_to_app</i>Cerrar sesión</a></li>
+        <li><a href="#" id="goDashboard"><i class="material-icons left">analytics</i>Dashboard</a></li>
+        <li><a href="/profile"><i class="material-icons left">manage_accounts</i>Mi Perfil</a></li>
+        <li><a href="#" id="logout"><i class="material-icons left">power_settings_new</i>Cerrar sesión</a></li>
       </ul>
     </div>
   </nav>
 
   <!-- Contenido principal -->
   <div class="container section">
-    <h4 class="red-text text-darken-2 center-align">Panel de Administración</h4>
+    <h4 class="page-title center-align">Panel de Administración</h4>
 
-    <div class="card-panel white z-depth-2">
-      <h5 class="red-text text-darken-2">
-        <i class="material-icons left">group</i>Usuarios Registrados
+    <div class="card-panel z-depth-2">
+      <h5 class="section-title">
+        <i class="material-icons left">groups</i>Usuarios Registrados
       </h5>
 
       <table class="highlight responsive-table">
-        <thead class="grey lighten-3">
+        <thead class="table-header">
           <tr>
             <th>Nombre</th>
             <th>Email</th>
